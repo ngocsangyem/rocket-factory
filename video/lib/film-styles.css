@@ -1,0 +1,60 @@
+:root { --amber: #ffb547; --ink: #ececea; --muted: #9a978f; --ground: #0c0c0c; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--ground); }
+
+/* The camera: the factory is vector art, so it stays sharp at any zoom. */
+#cam, #shake { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+/* The whole 1600x1000 scene, uncropped: 60 px hang off the top and bottom for the camera to use. */
+#factory { position: absolute; left: 0; top: -60px; width: 1920px; height: 1200px; }
+#factory svg { width: 100%; height: 100%; display: block; }
+#factory .pinTR { transform: translate(0, 55px); }
+#factory .pinBR { transform: translate(0, -55px); }
+
+.scrim { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+#scrim-l { background: linear-gradient(90deg, rgba(12,12,12,.96) 0%, rgba(12,12,12,.88) 34%, rgba(12,12,12,0) 62%); }
+#scrim-r { background: linear-gradient(270deg, rgba(12,12,12,.96) 0%, rgba(12,12,12,.88) 34%, rgba(12,12,12,0) 62%); }
+#scrim-c { background: radial-gradient(ellipse 62% 48% at 50% 50%, rgba(12,12,12,.9) 0%, rgba(12,12,12,.72) 55%, rgba(12,12,12,0) 100%); }
+#flash { position: absolute; inset: 0; z-index: 6; background: #fff3d6; }
+#dip { position: absolute; inset: 0; z-index: 6; background: #000; }
+
+.txt { position: absolute; z-index: 4; }
+.kicker { font-family: "JetBrains Mono", monospace; font-size: 30px; letter-spacing: 6px; text-transform: uppercase; color: var(--muted); }
+.tool { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 132px; line-height: 150px; color: var(--amber); text-shadow: 0 0 26px rgba(255,181,71,.45); white-space: nowrap; }
+.rule { width: 520px; height: 5px; background: var(--amber); margin: 8px 0 26px; }
+.big { font-family: "League Gothic", sans-serif; text-transform: uppercase; color: var(--ink); line-height: .96; white-space: nowrap; }
+.line { display: block; overflow: hidden; padding-top: .06em; }
+.line > span { display: inline-block; }
+.w { display: inline-block; white-space: pre; }
+.l { display: inline-block; white-space: pre; }
+.amber { color: var(--amber); }
+.station .big { font-size: 128px; }
+.left { left: 130px; top: 300px; }
+.right { left: 1010px; top: 300px; }
+
+#t-hook { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#t-hook .big { position: absolute; font-size: 250px; }
+#t-all { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; }
+#t-all .big { font-size: 190px; text-align: center; }
+#roller { height: 96px; overflow: hidden; border: 3px solid var(--amber); padding: 0 40px; min-width: 760px; }
+#roller-col p { height: 96px; line-height: 90px; text-align: center; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 56px; color: var(--amber); }
+
+#t-ring { left: 1010px; top: 150px; width: 780px; }
+#t-ring .big { font-size: 112px; }
+#count { position: relative; height: 440px; margin: 6px 0 2px; }
+#count p { position: absolute; left: 0; top: 0; font-family: "League Gothic", sans-serif; font-size: 480px; line-height: 440px; color: var(--amber); text-shadow: 0 0 40px rgba(255,181,71,.4); transform-origin: 20% 60%; }
+
+#t-fire { left: 1000px; top: 170px; }
+#t-fire .big { font-size: 380px; line-height: .86; }
+#t-fire .kicker { color: var(--amber); margin-top: 30px; }
+
+#t-fleet { left: 1010px; top: 596px; }
+#t-fleet .big { font-size: 120px; }
+
+#end { position: absolute; inset: 0; z-index: 8; }
+#end-in { position: absolute; inset: 0; background: var(--ground); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; }
+#end-in::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 2px, transparent 2px 5px); }
+#end-ring { position: absolute; left: 1377px; top: 432px; width: 260px; height: 260px; margin: -130px 0 0 -130px; border: 6px solid var(--amber); border-radius: 50%; }
+#end-title { font-family: "League Gothic", sans-serif; font-size: 330px; line-height: .9; letter-spacing: 6px; color: var(--amber); text-shadow: 0 0 44px rgba(255,181,71,.45); white-space: nowrap; }
+#end-sub { font-family: "JetBrains Mono", monospace; font-size: 44px; color: var(--ink); }
+#end-cta { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 38px; color: var(--ground); background: var(--amber); padding: 18px 36px; margin-top: 22px; }

@@ -2,6 +2,10 @@
 
 A Claude Code theme for the desktop app: a night-shift rocket factory on an old CRT monitor, drawn behind the conversation. Whatever Claude is doing, the matching station in the factory does it too. Each answered turn stacks one ring onto the rocket. At eight rings the factory counts down, test-fires the engines, rolls the ship out, and the fleet grows by one.
 
+[![Rocket Factory intro: stations light up as Claude works, rings stack, the rocket test-fires and rolls out](media/rocket-factory-intro.webp)](media/rocket-factory-intro.mp4)
+
+The clip above is silent. [Watch it with sound](media/rocket-factory-intro.mp4) (28 seconds, 2.3 MB).
+
 Inspired by @zustin-lu.
 
 ## What the factory does
@@ -131,6 +135,8 @@ hooks/factory-scene-svg.ts        assembles the SVG scene from hooks/scene-parts
 hooks/factory-palette.ts          app colors, built with make-colors.js
 types/index.d.ts                  shapes kept in $.state
 tests/                            tests for claude plugin test
+media/                            intro clip shown in this README
+video/                            HyperFrames source of the intro clip
 ```
 
 Run the tests and check the plugin:
@@ -144,6 +150,24 @@ claude plugin validate .
 ```
 
 The scene is one SVG string and must stay under 100,000 characters. The `factory-scene-size` test draws every combination of phase, ring count, trouble and mode to hold that limit. The tool table in `hooks/tool-to-workshop-station.ts` follows Claude Code 2.1.325; tools added in later versions go to the odd-jobs station until they are added to the table.
+
+### The intro clip
+
+The clip is rendered from `video/` with [HyperFrames](https://hyperframes.heygen.com). It draws the theme's real scene: a fixed script of Claude Code events runs through `hooks/factory-state-machine.ts` and `hooks/factory-scene-svg.ts`, so the clip changes when the factory does.
+
+Rebuild the scene bundle after changing anything in `hooks/`:
+
+```bash
+bun build video/factory-entry.ts --outfile video/lib/rocket-factory-scene.js --format iife
+```
+
+Then render from `video/`:
+
+```bash
+npx hyperframes render -o renders/rocket-factory-intro-master.mp4
+```
+
+The engine sound is "Eurofighter Typhoon Flyby 005 – Close Proximity" by TimoSchmied, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), from [Freesound](https://freesound.org/people/TimoSchmied/sounds/640505). Full sound credits are in `video/assets/sfx/CREDITS.md`.
 
 ## License
 
