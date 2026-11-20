@@ -71,3 +71,25 @@ test('unknown words get the help line; arguments ignore case', async ($, on) => 
   await runCommand($, 'calm')
   expect(await statusOf($)).toContain('mode calm')
 })
+
+test('after /clear the next prompt restores the ship the factory had', async ($, on) => {
+  engineBeneath(on)
+  on('session.end', (_: unknown, e: { sessionId: string }) => ({ sessionId: e.sessionId }))
+  on('prompt.submit', (_: unknown, e: { text: string }) => ({ text: e.text }))
+  on('tool.call', () => ({ result: {} }))
+  await $.session.start({ cwd: '/tmp/demo', surface: 'desktop', isInteractive: true })
+  await $.tool.call({ tool: 'Edit', file_path: '/tmp/a.ts', old_string: 'a', new_string: 'b' })
+  await $.turn.complete({ reason: 'answer', answer: 'ok', durationMs: 10, isAborted: false, turnId: 't1' })
+  await $.session.end({ reason: 'clear', sessionId: 's1', resume: null } as never)
+  await $.prompt.submit({ text: 'again' } as never)
+  // The test host refuses backdrop scenes, so the chip reads POWER FAULT; the state machine test covers SHIFT CHANGE.
+  expect(await statusOf($)).toContain('ring 1/8 · 1 weld')
+})
+
+test('a Bash call stopped with Esc is not scrap, even without the classic hook', async ($, on) => {
+  engineBeneath(on)
+  on('tool.call', () => ({ result: { stdout: '', stderr: '', interrupted: true }, isError: true, text: 'stopped' }))
+  await $.session.start({ cwd: '/tmp/demo', surface: 'desktop', isInteractive: true })
+  await $.tool.call({ tool: 'Bash', command: 'sleep 9' })
+  expect(await statusOf($)).toContain('0 scrap')
+})

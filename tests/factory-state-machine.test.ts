@@ -124,3 +124,12 @@ test('the next deadline is the earliest timed change', async () => {
   expect(nextDeadline(s)).toBe(6000)
   expect(nextDeadline(started())).toBe(null)
 })
+
+test('after /clear wiped the state, the stored ship and calm mode come back with a shift change', async () => {
+  const stored = { ...freshProgress(0, 2, 1), ring: 3 }
+  const restored = reduce(initialFactoryState(), { type: 'RESTORE', stored, mode: 'calm' }, 5000)
+  const s = reduce(restored, { type: 'CLEARED', stored }, 5000)
+  expect(s.phase).toBe('HANDOVER')
+  expect(s.mode).toBe('calm')
+  expect(s.progress.ring).toBe(3)
+})

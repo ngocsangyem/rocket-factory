@@ -21,6 +21,8 @@ const MODE_ARGS: Record<string, Mode> = { on: 'on', calm: 'calm', off: 'off' }
 
 // Tool calls the classic hook reported as interrupted (Esc), so their end is not counted as scrap.
 const interrupted = new Set<string>()
+// Set by session.end on /clear, so the theme's return shows the shift change.
+let clearedSinceTheme = false
 
 /** Sets the theme unless the person turned it off; true when a surface draws it now. */
 async function applyTheme($: EngineInterface): Promise<boolean> {
@@ -28,6 +30,15 @@ async function applyTheme($: EngineInterface): Promise<boolean> {
   if (s.mode === 'off') return false
   const set = await $.theme.set(LOOK)
   return set.isDrawn
+}
+
+/** Restores the shift after /clear, /resume or /branch, shows SHIFT CHANGE after a clear, and sets the theme again. */
+async function resumeShift($: EngineInterface): Promise<void> {
+  const stored = await loadProgress($)
+  await dispatch($, { type: 'RESTORE', stored, mode: await loadMode($) })
+  if (clearedSinceTheme) await dispatch($, { type: 'CLEARED', stored })
+  clearedSinceTheme = false
+  if (await applyTheme($)) await update($, themedFor, () => 'session')
 }
 
 export const register: Register = on => {
@@ -43,22 +54,24 @@ export const register: Register = on => {
     return next(e)
   })
 
-  // After /clear no session.start comes; the next prompt finds the theme not yet set for this session.
+  // /clear, /resume and /branch reset $.state and fire no session.start: set the theme straight away.
+  // Where an organization's guard passes over classic hooks, the next prompt does the same instead.
+  on('classic.SessionStart', { source: ['clear', 'resume', 'fork'] }, async ($, e, next) => {
+    await guarded($, 'SessionStart', () => resumeShift($))
+    return next(e)
+  })
+
   on('prompt.submit', async ($, e, next) => {
     await guarded($, 'prompt.submit', async () => {
-      if ((await read($, themedFor)) === 'session') return
-      const stored = await loadProgress($)
-      const wasRunning = (await readFactory($)).sessionStartedAt !== 0
-      if (wasRunning) await dispatch($, { type: 'CLEARED', stored })
-      else await dispatch($, { type: 'RESTORE', stored, mode: await loadMode($) })
-      if (await applyTheme($)) await update($, themedFor, () => 'session')
+      if ((await read($, themedFor)) !== 'session') await resumeShift($)
     })
     return next(e)
   })
 
   on('session.end', async ($, e, next) => {
-    // The theme of the old id is gone after /clear: mark it so the next prompt sets it again.
-    if (e.reason === 'clear') await guarded($, 'session.end', () => update($, themedFor, () => null))
+    // Module variables outlive /clear, so the shift change is still known when the theme comes back.
+    if (e.reason === 'clear') clearedSinceTheme = true
+    await guarded($, 'session.end', () => update($, themedFor, () => null))
     return next(e)
   })
 
@@ -89,7 +102,9 @@ export const register: Register = on => {
       return r
     } finally {
       const id = e.tool_use_id ?? ''
-      const outcome = outcomeOf(result, interrupted.delete(id))
+      // Bash reports Esc in its own result, which still works where classic hooks are passed over.
+      const ownInterrupt = (result as { result?: { interrupted?: unknown } }).result?.interrupted === true
+      const outcome = outcomeOf(result, interrupted.delete(id) || ownInterrupt)
       await guarded($, 'tool.call', () => dispatch($, { type: 'TOOL_END', tool: e.tool, outcome }))
     }
   })

@@ -27,6 +27,7 @@ export const palette = makeColors({
   },
 })
 
+// No overrideColorScheme: this build refuses the attribute, and colors with a dark mode alone already mean dark.
 export const LOOK: ThemeSetArgs = {
   colors: palette.theme,
   backdrop: { scene: 'factory', glass: { blur: 10, tint: '#111111', opacity: 0.55 } },

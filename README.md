@@ -44,12 +44,26 @@ If the theme itself hits a bug, the fuse box at the foot of the tower blinks POW
 
 The ship under construction is saved per project. It survives `/clear`, quitting and reopening the app, and extra sessions in the same project. When two sessions build at once, the one further along sets the ring count.
 
-- `/clear`: the theme comes back on your next message, the factory shows SHIFT CHANGE, and the mission clock starts again.
+- `/clear`: the theme comes straight back, the factory shows SHIFT CHANGE, and the mission clock starts again.
+- `/resume` and `/branch`: the theme comes straight back with the project's ship.
 - `/compact`: the factory shows MAINTENANCE while a light bar scans down the hull.
+
+### On a managed machine
+
+When your organization manages Claude Code (managed settings, or a Team or Enterprise login), Claude Code's built-in guard skips some hooks of mods you install yourself. The factory still builds, but a few reactions get simpler:
+
+- An API error shows SCRUBBED instead of its own picture (SIGNAL LOST, empty fuel, SUSPENDED, jammed crates).
+- Pressing Esc counts as scrap, except for a Bash command.
+- `/compact` shows no MAINTENANCE.
+- After `/clear`, `/resume` or `/branch`, the theme comes back on your next message instead of right away.
+
+An administrator can lift this by installing the mod as one of the organization's own.
 
 ## Install
 
-The backdrop is drawn by the Claude desktop and mobile apps. In a terminal or an editor the factory still counts but draws nothing. The theme is dark only and looks best with macOS in dark mode.
+The backdrop is drawn by the Claude desktop and mobile apps. In a terminal or an editor the factory still counts but draws nothing. The app colors need Claude Code 2.1.324 or later in the desktop app's Code tab. The theme is dark only and looks best with macOS in dark mode.
+
+A session has one theme at a time. Another mod that sets a theme replaces this one, and turning this one off clears whatever theme is set.
 
 You don't need a marketplace. Any of these loads the plugin straight from its folder.
 
