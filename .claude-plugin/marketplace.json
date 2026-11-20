@@ -1,0 +1,13 @@
+{
+  "name": "rocket-factory",
+  "description": "Rocket Factory: a night-shift rocket factory theme for the Claude Code desktop app.",
+  "owner": {
+    "name": "rocket-factory"
+  },
+  "plugins": [
+    {
+      "name": "rocket-factory",
+      "source": "./"
+    }
+  ]
+}

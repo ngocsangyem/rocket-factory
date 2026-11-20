@@ -1,0 +1,7 @@
+{
+  "name": "rocket-factory",
+  "version": "0.1.0",
+  "description": "Rocket Factory: a retro rocket-factory backdrop for Claude desktop that builds a ship from Claude's turns and tool calls.",
+  "license": "MIT",
+  "types": "./types/index.d.ts"
+}
